@@ -1,0 +1,5 @@
+{
+  "v1": [
+    "CREATE TABLE users (email CHAR(50) PRIMARY KEY NOT NULL, firstName CHAR(20), lastName CHAR(20), mobile CHAR(15));"
+  ]
+}

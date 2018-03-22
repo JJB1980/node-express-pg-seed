@@ -20,6 +20,14 @@
         "semi": [
             "error",
             "always"
-        ]
+        ],
+        "no-console": "off"
+    },
+    "parserOptions": {
+        "ecmaVersion": 2017,
+        "sourceType": "module",
+        "ecmaFeatures": {
+            "experimentalObjectRestSpread": true
+        }
     }
 }

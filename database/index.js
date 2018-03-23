@@ -12,9 +12,9 @@ if (!process.env.PGUSER) {
   pool = new Pool();
 }
 
-function query (sql) {
+function query (sql, args = []) {
   return new Promise((resolve, reject) => {
-    pool.query(sql, (err, res) => {
+    pool.query(sql, args, (err, res) => {
       if (err) {
         reject(err);
         return;

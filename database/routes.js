@@ -1,5 +1,6 @@
 const {query} = require('./');
 const sqlInstall = require('./install');
+// const passwordHash = require('password-hash');
 
 function dbRoutes (app) {
   app.get('/database/test', async (request, response) => {
@@ -12,26 +13,29 @@ function dbRoutes (app) {
   });
 }
 
-function install(request, response) {
-  let error = null;
+async function install (request, response) {
+  const errors = [];
+  const success = [];
+
   for (const key in sqlInstall) {
     const version = sqlInstall[key];
-    if (error) return;
-    version.forEach(async (sql) => {
+
+    for (let i = 0; i < version.length; i++) {
+      const sql = version[i];
+
       try {
-        const result = await query(sql);
-        if (!result) {
-          error = 'No result.';
-          return;
-        }
+        await query(sql);
+        success.push({key, i});
       } catch (e) {
-        error = e.toString();
-        return;
+        errors.push({key, i, errors: e.toString()});
       }
-    });
+    }
   }
-  if (!error) response.send('Success!');
-  if (error) response.send(error);
+
+  response.json({
+    success,
+    errors
+  });
 }
 
 module.exports = {

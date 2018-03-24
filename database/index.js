@@ -14,12 +14,12 @@ if (!process.env.PGUSER) {
 
 function query (sql, args = []) {
   return new Promise((resolve, reject) => {
-    pool.query(sql, args, (err, res) => {
-      if (err) {
-        reject(err);
+    pool.query(sql, args, (error, response) => {
+      if (error) {
+        reject(error);
         return;
       }
-      resolve(res.rows);
+      resolve(response.rows);
     });
   });
 }

@@ -3,8 +3,9 @@
     "CREATE TABLE settings (setting CHAR(20) PRIMARY KEY NOT NULL, value CHAR(20));"
   ],
   "v1": [
-    "CREATE TABLE users (email CHAR(50) PRIMARY KEY NOT NULL, password VARCHAR, firstName CHAR(20), lastName CHAR(20), mobile CHAR(15));",
+    "DROP TABLE users;",
+    "CREATE TABLE users (email CHAR(50) PRIMARY KEY NOT NULL, password VARCHAR, admin BOOLEAN, firstName CHAR(20), lastName CHAR(20), mobile CHAR(15));",
     "DELETE FROM users WHERE email = 'admin';",
-    "INSERT INTO users (email, password, firstName, lastName, mobile) values ('admin', 'sha1$c1575e56$1$181796117f7a3601f4fc52a66ce0b22a506c2348', 'admin', 'admin', '1');"
+    "INSERT INTO users (email, password, admin, firstName, lastName, mobile) values ('admin', 'sha1$f5b0b1d0$1$719d97233e8c2b020542dc4c1c3af5cf5a2e00ce', TRUE, 'admin', 'admin', '1');"
   ]
 }

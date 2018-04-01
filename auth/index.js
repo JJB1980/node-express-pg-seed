@@ -2,7 +2,8 @@ const jwt = require('jsonwebtoken');
 const {config: {auth: {jwtKey}}} = require('../config');
 
 const whiteList = [
-  '/auth/login'
+  '/auth/login',
+  '/user/signup'
 ];
 const adminRoutes = [
   '/database'
@@ -10,7 +11,7 @@ const adminRoutes = [
 
 function authorizeHeader (request, response) {
   if (whiteList.find(path => path === request.originalUrl)) {
-    return true;
+    return {success: true};
   }
   const {authorization} = request.headers;
   if (!authorization) {
@@ -20,17 +21,23 @@ function authorizeHeader (request, response) {
   }
   try {
     const decoded = jwt.verify(authorization, jwtKey);
-    if (adminRoutes.find(path => request.originalUrl.indexOf(path) >= 1) && !decoded.admin) {
+    if (adminRoutes.find(path => request.originalUrl.indexOf(path) >= 1) && !decoded.isAdmin) {
       response.status(401);
       response.json({error: 'Unauthorized.'});
       return false;
+    } else {
+      const ua = request.headers['user-agent'];
+      if (ua === decoded.ua) {
+        return {success: true, isAdmin: decoded.isAdmin};
+      } else {
+        return false;
+      }
     }
   } catch (e) {
     response.status(401);
     response.json({error: 'Invalid token.'});
     return false;
   }
-  return true;
 }
 
 module.exports = {

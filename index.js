@@ -8,6 +8,7 @@ const {authRoutes} = require('./auth/routes');
 const {userRoutes} = require('./users/routes');
 const {authorizeHeader} = require('./auth/');
 const {closeConnection} = require('./database/index.js');
+const {initMail} = require('./utils');
 
 const app = express();
 
@@ -27,6 +28,9 @@ routes(app);
 dbRoutes(app);
 authRoutes(app);
 userRoutes(app);
+
+// initialisation
+initMail();
 
 const port = process.env.PORT || 8081;
 const server = app.listen(port, function () {

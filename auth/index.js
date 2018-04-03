@@ -1,9 +1,11 @@
 const jwt = require('jsonwebtoken');
 const {config: {auth: {jwtKey}}} = require('../config');
+const {getIP} = require('../utils');
 
 const whiteList = [
   '/auth/login',
-  '/user/signup'
+  '/user/signup',
+  '/user/resetPassword'
 ];
 const adminRoutes = [
   '/database'
@@ -27,7 +29,8 @@ function authorizeHeader (request, response) {
       return false;
     } else {
       const ua = request.headers['user-agent'];
-      if (ua === decoded.ua) {
+      const ip = getIP(request);
+      if (ua === decoded.ua && ip === decoded.ip) {
         return {success: true, isAdmin: decoded.isAdmin};
       } else {
         return false;

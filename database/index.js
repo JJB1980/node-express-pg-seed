@@ -1,9 +1,8 @@
 const { Pool } = require('pg');
 
-const config = require('../config/config');
+const {config} = require('../config');
 
-const env = process.env.NODE_ENV || 'development';
-const dbConfig = config[env].database;
+const dbConfig = config.database;
 
 let pool = null;
 if (!process.env.PGUSER) {

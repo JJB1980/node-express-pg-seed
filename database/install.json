@@ -4,7 +4,7 @@
   ],
   "v1": [
     "DROP TABLE users;",
-    "CREATE TABLE users (email CHAR(50) PRIMARY KEY NOT NULL, password VARCHAR, admin BOOLEAN, firstName CHAR(20), lastName CHAR(20), mobile CHAR(15));",
+    "CREATE TABLE users (email CHAR(50) PRIMARY KEY NOT NULL, password VARCHAR, admin BOOLEAN, firstName CHAR(20), lastName CHAR(20), mobile CHAR(15), token VARCHAR);",
     "DELETE FROM users WHERE email = 'admin';",
     "INSERT INTO users (email, password, admin, firstName, lastName, mobile) values ('admin', 'sha1$f5b0b1d0$1$719d97233e8c2b020542dc4c1c3af5cf5a2e00ce', TRUE, 'admin', 'admin', '1');"
   ]

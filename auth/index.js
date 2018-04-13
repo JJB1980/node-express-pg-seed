@@ -5,10 +5,13 @@ const {USER_SELECT} = require('../database/sql');
 const {query} = require('../database/');
 const {config: {auth: {jwtKey}}} = require('../config');
 const {getIP} = require('../utils');
+// 0397055200
 
 const whiteList = [
   '/auth/login',
   '/user/signup',
+  '/user/requestPasswordReset',
+  '/user/validateResetPassword',
   '/user/resetPassword',
   '/user/validateEmail'
 ];
@@ -17,7 +20,8 @@ const adminRoutes = [
 ];
 
 function authorizeHeader (request, response) {
-  if (whiteList.find(path => path === request.originalUrl)) {
+  // if (whiteList.find(path => path === request.originalUrl)) {
+  if (whiteList.find(path => request.originalUrl.indexOf(path) >= 0)) {
     return {success: true};
   }
   const {authorization} = request.headers;
@@ -28,15 +32,16 @@ function authorizeHeader (request, response) {
   }
   try {
     const decoded = jwt.verify(authorization, jwtKey);
-    if (adminRoutes.find(path => request.originalUrl.indexOf(path) >= 1) && !decoded.isAdmin) {
+    const {isAdmin, ua: jwtUa, ip: jwtIp} = decoded;
+    if (adminRoutes.find(path => request.originalUrl.indexOf(path) >= 1) && !isAdmin) {
       response.status(401);
       response.json({error: 'Unauthorized.'});
       return false;
     } else {
       const ua = request.headers['user-agent'];
       const ip = getIP(request);
-      if (ua === decoded.ua && ip === decoded.ip) {
-        return {success: true, isAdmin: decoded.isAdmin};
+      if (ua === jwtUa && ip === jwtIp) {
+        return {success: true, isAdmin};
       } else {
         return false;
       }
@@ -57,13 +62,13 @@ async function login (request, response) {
       response.json({sucess: false, error: 'Invalid user.'});
       return;
     }
-    const verified = passwordHash.verify(password, result[0].password);
+    const {password: verifyPassword, admin} = result[0];
+    const verified = passwordHash.verify(password, verifyPassword);
     if (!verified) {
       response.status(401);
       response.json({sucess: false, error: 'Invalid password.'});
       return;
     }
-    const {admin} = result[0];
     const ua = request.headers['user-agent'];
     const ip = getIP(request);
     const token = jwt.sign({ email, isAdmin: admin, ua, ip }, jwtKey);

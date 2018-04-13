@@ -1,11 +1,8 @@
-const USER_SELECT = 'SELECT * FROM users WHERE email = $1;';
-const USER_INSERT = 'INSERT INTO users (firstname, lastname, mobile, email, password) VALUES ($1, $2, $3, $4, $5);';
-const USER_RESET_PASSWORD = 'UPDATE users SET token = $1 WHERE email = $2;';
-const USER_VALIDATE_EMAIL = 'SELECT email from users WHERE email = $1';
-
 module.exports = {
-  USER_SELECT,
-  USER_INSERT,
-  USER_RESET_PASSWORD,
-  USER_VALIDATE_EMAIL
+  USER_SELECT: 'SELECT * FROM users WHERE email = $1;',
+  USER_INSERT: 'INSERT INTO users (firstname, lastname, mobile, email, password) VALUES ($1, $2, $3, $4, $5);',
+  USER_REQUEST_RESET_PASSWORD: 'UPDATE users SET token = $1 WHERE email = $2;',
+  USER_VALIDATE_EMAIL: 'SELECT email from users WHERE email = $1',
+  USER_VALIDATE_PASSWORD_RESET_TOKEN: 'SELECT email FROM users WHERE token = $1',
+  USER_RESET_PASSWORD: 'UPDATE users SET password = $1, token = \'\' WHERE token = $2 AND email = $3'
 };

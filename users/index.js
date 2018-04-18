@@ -97,7 +97,7 @@ async function resetPassword (request, response) {
     const tokenResult = await query(USER_VALIDATE_PASSWORD_RESET_TOKEN, [token]);
     if (tokenResult.length && tokenResult[0].email === email) {
       const hashedPassword = passwordHash.generate(password);
-      await query(USER_RESET_PASSWORD, [hashedPassword, token, email]);
+      await query(USER_RESET_PASSWORD, [hashedPassword, email]);
       response.json({success: true});
     } else {
       response.json({success: false, error: 'Invalid token and email.'});

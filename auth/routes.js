@@ -7,8 +7,10 @@ function authRoutes (app) {
 
   app.get('/auth/authenticate', (request, response) => {
     const result = authorizeHeader(request, response);
-    if (result && result.success) {
-      response.json({success: true, authenticated: true, isAdmin: result.isAdmin});
+    const {success, isAdmin, firstname, lastname} = result;
+
+    if (result && success) {
+      response.json({success: true, authenticated: true, isAdmin, firstname, lastname});
     }
   });
 }

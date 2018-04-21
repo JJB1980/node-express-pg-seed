@@ -32,7 +32,7 @@ function authorizeHeader (request, response) {
   }
   try {
     const decoded = jwt.verify(authorization, jwtKey);
-    const {isAdmin, ua: jwtUa, ip: jwtIp} = decoded;
+    const {isAdmin, ua: jwtUa, ip: jwtIp, firstname, lastname} = decoded;
     if (adminRoutes.find(path => request.originalUrl.indexOf(path) >= 1) && !isAdmin) {
       response.status(401);
       response.json({error: 'Unauthorized.'});
@@ -41,7 +41,7 @@ function authorizeHeader (request, response) {
       const ua = request.headers['user-agent'];
       const ip = getIP(request);
       if (ua === jwtUa && ip === jwtIp) {
-        return {success: true, isAdmin};
+        return {success: true, isAdmin, firstname, lastname};
       } else {
         return false;
       }
@@ -62,7 +62,7 @@ async function login (request, response) {
       response.json({sucess: false, error: 'Invalid user.'});
       return;
     }
-    const {password: verifyPassword, admin} = result[0];
+    const {password: verifyPassword, admin, firstname, lastname} = result[0];
     const verified = passwordHash.verify(password, verifyPassword);
     if (!verified) {
       response.status(401);
@@ -71,8 +71,8 @@ async function login (request, response) {
     }
     const ua = request.headers['user-agent'];
     const ip = getIP(request);
-    const token = jwt.sign({ email, isAdmin: admin, ua, ip }, jwtKey);
-    response.json({success: true, token, isAdmin: admin});
+    const token = jwt.sign({ email, isAdmin: admin, ua, ip, firstname, lastname }, jwtKey);
+    response.json({success: true, token, isAdmin: admin, firstname, lastname});
   } catch (e) {
     response.status(401);
     response.json({success: false, error: e.toString()});

@@ -7,11 +7,16 @@ const {
   USER_REQUEST_RESET_PASSWORD,
   USER_VALIDATE_EMAIL,
   USER_VALIDATE_PASSWORD_RESET_TOKEN,
-  USER_RESET_PASSWORD
+  USER_RESET_PASSWORD,
+  USER_SELECT_PROFILE,
+  USER_UPDATE_PROFILE,
+  USER_EMAIL_OK_UPDATE,
+  USER_UDPATE_PASSWORD
 } = require('../database/sql');
 const {query} = require('../database/');
 const {sendMail} = require('../utils');
 const {config} = require('../config');
+const {getDecodedJwt, validatePassword} = require('../auth')
 
 async function validateEmail (request, response) {
   const {email} = request.body;
@@ -28,14 +33,14 @@ async function validateEmail (request, response) {
 }
 
 async function signup (request, response) {
-  const {firstName, lastName, mobile, email, password} = request.body;
-  if (!firstName || !lastName || !mobile || !email || !password) {
+  const {firstname, lastname, mobile, email, password} = request.body;
+  if (!firstname || !lastname || !mobile || !email || !password) {
     response.json({success: false, error: 'Required fields not complete.'});
     return;
   }
   const hashedPassword = passwordHash.generate(password);
   try {
-    const result = await query(USER_INSERT, [firstName, lastName, mobile, email, hashedPassword]);
+    const result = await query(USER_INSERT, [firstname, lastname, mobile, email, hashedPassword]);
     if (result) {
       response.json({success: true});
     } else {
@@ -107,10 +112,63 @@ async function resetPassword (request, response) {
   }
 }
 
+async function fetchProfile (request, response) {
+  const {id} = getDecodedJwt(request);
+  try {
+    const result = await query(USER_SELECT_PROFILE, [id]);
+    if (result.length) {
+      response.json({success: true, ...result[0]})
+    } else {
+      response.json({success: false, error: 'User not found.'})
+    }
+  } catch (error) {
+    console.log(error)
+    response.json({success: false, error: error.toString()})
+  }
+}
+
+async function updateProfile (request, response) {
+  const {id} = getDecodedJwt(request);
+  const {firstname, lastname, email, mobile} = request.body;
+  try {
+    const result = await query(USER_EMAIL_OK_UPDATE, [email, id]);
+    if (result.length) {
+      response.json({success: false, error: 'Email already taken.'})
+      return;
+    }
+    await query(USER_UPDATE_PROFILE, [firstname, lastname, email, mobile, id]);
+    response.json({success: true});
+  } catch (error) {
+    console.log(error)
+    response.json({success: false, error: error.toString()})
+  }
+}
+
+async function updatePassword (request, response) {
+  const {password, confirmPassword} = request.body;
+  const {email, id} = getDecodedJwt(request);
+  try {
+    const result = await query(USER_SELECT, [email]);
+    const {password: verifyPassword} = result[0];
+    if (!validatePassword(confirmPassword, verifyPassword)) {
+      response.json({success: false, error: 'Invalid password.'})
+      return;
+    }
+    const hashedPassword = passwordHash.generate(password);
+    await query(USER_UDPATE_PASSWORD, [hashedPassword, id]);
+    response.json({success: true});
+  } catch (error) {
+    response.json({success: false, error: error.toString()})
+  }
+}
+
 module.exports = {
   signup,
   requestPasswordReset,
   validateEmail,
   validateResetPassword,
-  resetPassword
+  resetPassword,
+  fetchProfile,
+  updateProfile,
+  updatePassword
 };

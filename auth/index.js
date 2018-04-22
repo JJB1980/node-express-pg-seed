@@ -10,10 +10,12 @@ const {getIP} = require('../utils');
 const whiteList = [
   '/auth/login',
   '/user/signup',
+  '/user/register',
   '/user/requestPasswordReset',
   '/user/validateResetPassword',
   '/user/resetPassword',
-  '/user/validateEmail'
+  '/user/validateEmail',
+  '/database'
 ];
 const adminRoutes = [
   '/database'
@@ -32,7 +34,7 @@ function authorizeHeader (request, response) {
   }
   try {
     const decoded = jwt.verify(authorization, jwtKey);
-    const {isAdmin, ua: jwtUa, ip: jwtIp, firstname, lastname} = decoded;
+    const {isAdmin, ua: jwtUa, ip: jwtIp, firstname, lastname, id} = decoded;
     if (adminRoutes.find(path => request.originalUrl.indexOf(path) >= 1) && !isAdmin) {
       response.status(401);
       response.json({error: 'Unauthorized.'});
@@ -53,6 +55,16 @@ function authorizeHeader (request, response) {
   }
 }
 
+function getDecodedJwt (request) {
+  const {authorization} = request.headers;
+  const decoded = jwt.verify(authorization, jwtKey);
+  return decoded;
+}
+
+function validatePassword (password, verifyPassword) {
+  return passwordHash.verify(password, verifyPassword);
+}
+
 async function login (request, response) {
   try {
     const {email, password} = request.body;
@@ -62,8 +74,8 @@ async function login (request, response) {
       response.json({sucess: false, error: 'Invalid user.'});
       return;
     }
-    const {password: verifyPassword, admin, firstname, lastname} = result[0];
-    const verified = passwordHash.verify(password, verifyPassword);
+    const {password: verifyPassword, admin, firstname, lastname, id} = result[0];
+    const verified = validatePassword(password, verifyPassword);
     if (!verified) {
       response.status(401);
       response.json({sucess: false, error: 'Invalid password.'});
@@ -71,7 +83,7 @@ async function login (request, response) {
     }
     const ua = request.headers['user-agent'];
     const ip = getIP(request);
-    const token = jwt.sign({ email, isAdmin: admin, ua, ip, firstname, lastname }, jwtKey);
+    const token = jwt.sign({ email, isAdmin: admin, ua, ip, firstname, lastname, id }, jwtKey);
     response.json({success: true, token, isAdmin: admin, firstname, lastname});
   } catch (e) {
     response.status(401);
@@ -81,5 +93,7 @@ async function login (request, response) {
 
 module.exports = {
   authorizeHeader,
-  login
+  login,
+  getDecodedJwt,
+  validatePassword
 };

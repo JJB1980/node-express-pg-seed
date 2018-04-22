@@ -3,11 +3,14 @@ const {
   requestPasswordReset,
   validateEmail,
   validateResetPassword,
-  resetPassword
+  resetPassword,
+  fetchProfile,
+  updateProfile,
+  updatePassword
 } = require('./');
 
 function userRoutes (app) {
-  app.post('/user/signup', (request, response) => {
+  app.post('/user/register', (request, response) => {
     signup(request, response);
   });
 
@@ -25,6 +28,18 @@ function userRoutes (app) {
 
   app.post('/user/validateEmail', (request, response) => {
     validateEmail(request, response);
+  });
+
+  app.get('/user/fetchProfile', (request, response) => {
+    fetchProfile(request, response);
+  });
+
+  app.post('/user/updateProfile', (request, response) => {
+    updateProfile(request, response);
+  });
+
+  app.post('/user/updatePassword', (request, response) => {
+    updatePassword(request, response);
   });
 }
 

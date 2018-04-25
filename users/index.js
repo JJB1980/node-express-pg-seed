@@ -11,7 +11,8 @@ const {
   USER_SELECT_PROFILE,
   USER_UPDATE_PROFILE,
   USER_EMAIL_OK_UPDATE,
-  USER_UDPATE_PASSWORD
+  USER_UDPATE_PASSWORD,
+  USERS_SELECT
 } = require('../database/sql');
 const {query} = require('../database/');
 const {sendMail} = require('../utils');
@@ -162,6 +163,21 @@ async function updatePassword (request, response) {
   }
 }
 
+async function selectUsers (request, response) {
+  try {
+    const {isAdmin} = getDecodedJwt(request);
+    if (!isAdmin) {
+      response.status(404);
+      response.json({success: false, error: 'Not authorized.'});
+      return;
+    }
+    const users = await query(USERS_SELECT);
+    response.json({sucess: true, data: users})
+  } catch (error) {
+    response.json({success: false, error : error.toString()})
+  }
+}
+
 module.exports = {
   signup,
   requestPasswordReset,
@@ -170,5 +186,6 @@ module.exports = {
   resetPassword,
   fetchProfile,
   updateProfile,
-  updatePassword
+  updatePassword,
+  selectUsers
 };

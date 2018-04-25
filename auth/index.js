@@ -5,7 +5,6 @@ const {USER_SELECT} = require('../database/sql');
 const {query} = require('../database/');
 const {config: {auth: {jwtKey}}} = require('../config');
 const {getIP} = require('../utils');
-// 0397055200
 
 const whiteList = [
   '/auth/login',
@@ -22,7 +21,6 @@ const adminRoutes = [
 ];
 
 function authorizeHeader (request, response) {
-  // if (whiteList.find(path => path === request.originalUrl)) {
   if (whiteList.find(path => request.originalUrl.indexOf(path) >= 0)) {
     return {success: true};
   }
@@ -42,9 +40,11 @@ function authorizeHeader (request, response) {
     } else {
       const ua = request.headers['user-agent'];
       const ip = getIP(request);
-      if (ua === jwtUa && ip === jwtIp) {
+      if (isAdmin || (ua === jwtUa && ip === jwtIp)) {
         return {success: true, isAdmin, firstname, lastname};
       } else {
+        response.status(401);
+        response.json({success: false, error: 'User agent does not match.'});
         return false;
       }
     }

@@ -6,7 +6,8 @@ const {
   resetPassword,
   fetchProfile,
   updateProfile,
-  updatePassword
+  updatePassword,
+  selectUsers
 } = require('./');
 
 function userRoutes (app) {
@@ -40,6 +41,10 @@ function userRoutes (app) {
 
   app.post('/user/updatePassword', (request, response) => {
     updatePassword(request, response);
+  });
+
+  app.get('/user/selectUsers', (request, response) => {
+    selectUsers(request, response);
   });
 }
 

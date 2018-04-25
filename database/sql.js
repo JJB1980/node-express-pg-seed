@@ -8,5 +8,6 @@ module.exports = {
   USER_SELECT_PROFILE: 'SELECT firstname, lastname, email, admin, mobile FROM users WHERE id = $1',
   USER_UPDATE_PROFILE: 'UPDATE users SET firstname = $1, lastname = $2, email = $3, mobile = $4 WHERE id = $5',
   USER_EMAIL_OK_UPDATE: 'SELECT * FROM users WHERE email = $1 AND id <> $2',
-  USER_UDPATE_PASSWORD: 'UPDATE users SET password = $1 WHERE id = $2'
+  USER_UDPATE_PASSWORD: 'UPDATE users SET password = $1 WHERE id = $2',
+  USERS_SELECT: 'SELECT id, firstname, lastname, email, mobile FROM users'
 };

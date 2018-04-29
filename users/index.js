@@ -123,7 +123,6 @@ async function fetchProfile (request, response) {
       response.json({success: false, error: 'User not found.'})
     }
   } catch (error) {
-    console.log(error)
     response.json({success: false, error: error.toString()})
   }
 }
@@ -140,7 +139,6 @@ async function updateProfile (request, response) {
     await query(USER_UPDATE_PROFILE, [firstname, lastname, email, mobile, id]);
     response.json({success: true});
   } catch (error) {
-    console.log(error)
     response.json({success: false, error: error.toString()})
   }
 }
@@ -172,9 +170,9 @@ async function selectUsers (request, response) {
       return;
     }
     const users = await query(USERS_SELECT);
-    response.json({sucess: true, data: users})
+    response.json({success: true, data: users})
   } catch (error) {
-    response.json({success: false, error : error.toString()})
+    response.json({success: false, error: error.toString()})
   }
 }
 

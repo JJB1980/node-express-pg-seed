@@ -16,13 +16,10 @@ function dbRoutes (app) {
 async function install (request, response) {
   const errors = [];
   const success = [];
-
   for (const key in sqlInstall) {
     const version = sqlInstall[key];
-
     for (let i = 0; i < version.length; i++) {
       const sql = version[i];
-
       try {
         await query(sql);
         success.push({key, i});
@@ -31,7 +28,6 @@ async function install (request, response) {
       }
     }
   }
-
   response.json({
     success,
     errors

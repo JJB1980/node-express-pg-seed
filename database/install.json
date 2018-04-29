@@ -1,10 +1,11 @@
 {
   "v0": [
-    "CREATE TABLE settings (setting CHAR(20) PRIMARY KEY NOT NULL, value CHAR(20));"
+    "DROP TABLE settings;",
+    "CREATE TABLE settings (setting VARCHAR PRIMARY KEY NOT NULL, value VARCHAR);"
   ],
   "v1": [
     "DROP TABLE users;",
-    "CREATE TABLE users (id SERIAL PRIMARY KEY, email CHAR(50), password VARCHAR, admin BOOLEAN, firstName CHAR(20), lastName CHAR(20), mobile CHAR(15), token VARCHAR);",
+    "CREATE TABLE users (id SERIAL PRIMARY KEY, email VARCHAR, password VARCHAR, admin BOOLEAN, firstName VARCHAR, lastName VARCHAR, mobile VARCHAR, token VARCHAR);",
     "DELETE FROM users WHERE email = 'admin';",
     "INSERT INTO users (email, password, admin, firstName, lastName, mobile) values ('admin', 'sha1$f5b0b1d0$1$719d97233e8c2b020542dc4c1c3af5cf5a2e00ce', TRUE, 'admin', 'admin', '1');"
   ]

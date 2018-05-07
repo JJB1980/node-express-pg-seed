@@ -29,7 +29,7 @@ async function validateEmail (request, response) {
       response.json({success: true});
     }
   } catch (error) {
-    response.json({success: false, error: error.toString()});
+    response.json({success: false, error: error.message});
   }
 }
 
@@ -48,7 +48,7 @@ async function signup (request, response) {
       response.json({success: false, error: 'Unable to create user.'});
     }
   } catch (error) {
-    const errorString = error.toString();
+    const errorString = error.message;
     if (errorString.indexOf('duplicate key') >= 0) {
       response.json({success: false, error: 'User already exists.'});
     } else {
@@ -109,7 +109,7 @@ async function resetPassword (request, response) {
       response.json({success: false, error: 'Invalid token and email.'});
     }
   } catch (error) {
-    response.json({success: false, error: error.toString()});
+    response.json({success: false, error: error.message});
   }
 }
 
@@ -123,7 +123,7 @@ async function fetchProfile (request, response) {
       response.json({success: false, error: 'User not found.'})
     }
   } catch (error) {
-    response.json({success: false, error: error.toString()})
+    response.json({success: false, error: error.message})
   }
 }
 
@@ -139,7 +139,7 @@ async function updateProfile (request, response) {
     await query(USER_UPDATE_PROFILE, [firstname, lastname, email, mobile, id]);
     response.json({success: true});
   } catch (error) {
-    response.json({success: false, error: error.toString()})
+    response.json({success: false, error: error.message})
   }
 }
 
@@ -157,7 +157,7 @@ async function updatePassword (request, response) {
     await query(USER_UDPATE_PASSWORD, [hashedPassword, id]);
     response.json({success: true});
   } catch (error) {
-    response.json({success: false, error: error.toString()})
+    response.json({success: false, error: error.message})
   }
 }
 
@@ -172,7 +172,7 @@ async function selectUsers (request, response) {
     const users = await query(USERS_SELECT);
     response.json({success: true, data: users})
   } catch (error) {
-    response.json({success: false, error: error.toString()})
+    response.json({success: false, error: error.message})
   }
 }
 

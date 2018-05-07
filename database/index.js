@@ -1,14 +1,15 @@
 const { Pool } = require('pg');
-
 const {config} = require('../config');
 
 const dbConfig = config.database;
-
 let pool = null;
-if (!process.env.PGUSER) {
-  pool = new Pool({...dbConfig});
-} else {
-  pool = new Pool();
+
+function initDB () {
+  if (!process.env.production) {
+    pool = new Pool({...dbConfig});
+  } else {
+    pool = new Pool();
+  }
 }
 
 function query (sql, args = []) {
@@ -33,5 +34,6 @@ function closeConnection () {
 
 module.exports = {
   query,
-  closeConnection
+  closeConnection,
+  initDB
 };

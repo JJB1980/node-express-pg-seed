@@ -44,7 +44,7 @@ function authorizeHeader (request, response) {
         return {success: true, isAdmin, firstname, lastname};
       } else {
         response.status(401);
-        response.json({success: false, error: 'User agent does not match.'});
+        response.json({success: false, error: 'Config does not match.'});
         return false;
       }
     }

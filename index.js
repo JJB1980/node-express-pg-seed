@@ -9,6 +9,7 @@ const {userRoutes} = require('./users/routes');
 const {authorizeHeader} = require('./auth/');
 const {closeConnection, initDB} = require('./database');
 const {initMail} = require('./utils');
+const compression = require('compression');
 
 const app = express();
 
@@ -17,6 +18,7 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 
 app.use(cors());
+app.use(compression());
 
 // auth on routes
 app.use((request, response, next) => {

@@ -10,7 +10,7 @@ function authRoutes (app) {
     const {success, isAdmin, firstname, lastname} = result;
 
     if (result && success) {
-      response.json({success: true, authenticated: true, isAdmin, firstname, lastname});
+      response.json({success: true, data: {authenticated: true, isAdmin, firstname, lastname}});
     }
   });
 }

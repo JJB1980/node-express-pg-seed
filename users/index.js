@@ -14,6 +14,7 @@ const {
   USER_UDPATE_PASSWORD,
   USERS_SELECT
 } = require('../database/sql');
+
 const {query} = require('../database/');
 const {sendMail} = require('../utils');
 const {config} = require('../config');
@@ -118,7 +119,7 @@ async function fetchProfile (request, response) {
   try {
     const result = await query(USER_SELECT_PROFILE, [id]);
     if (result.length) {
-      response.json({success: true, ...result[0]})
+      response.json({success: true, data: {...result[0]}})
     } else {
       response.json({success: false, error: 'User not found.'})
     }

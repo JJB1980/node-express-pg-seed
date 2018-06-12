@@ -83,8 +83,8 @@ async function login (request, response) {
     }
     const ua = request.headers['user-agent'];
     const ip = getIP(request);
-    const token = jwt.sign({ email, isAdmin: admin, ua, ip, firstname, lastname, id }, jwtKey);
-    response.json({success: true, token, isAdmin: admin, firstname, lastname});
+    const token = jwt.sign({email, isAdmin: admin, ua, ip, firstname, lastname, id}, jwtKey);
+    response.json({success: true, data: {token, isAdmin: admin, firstname, lastname}});
   } catch (e) {
     response.status(401);
     response.json({success: false, error: e.toString()});

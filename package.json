@@ -5,7 +5,14 @@
   "main": "index.js",
   "scripts": {
     "test": "mocha . --exit",
-    "lint": "node_modules/.bin/eslint --fix"
+    "lint": "node_modules/.bin/eslint --fix",
+    "dev": "NODE_ENV=development nodemon .",
+    "start": "NODE_ENV=production npx nodemon .",
+    "pm2-start": "pm2 start ./index.js",
+    "pm2-stop": "pm2 stop ./index.js",
+    "docker-build": "docker build -t jjb1980/node-pg-seed . && docker push jjb1980/node-pg-seed",
+    "docker-run": "docker run --rm --name node-pg-seed -p 8081:8081 -d jjb1980/node-pg-seed",
+    "docker-stop": "docker stop node-pg-seed"
   },
   "author": "John Bowden",
   "license": "ISC",
@@ -18,12 +25,12 @@
     "jsonwebtoken": "^8.2.0",
     "multer": "^1.3.0",
     "nodemailer": "^4.6.4",
+    "nodemon": "^1.17.5",
     "password-hash": "^1.2.2",
     "pg": "^7.4.1",
     "uuid": "^3.2.1"
   },
   "devDependencies": {
-    "eslint": "^4.19.1",
-    "nodemon": "^1.17.2"
+    "eslint": "^4.19.1"
   }
 }

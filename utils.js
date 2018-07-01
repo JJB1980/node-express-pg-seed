@@ -1,10 +1,10 @@
 const nodemailer = require('nodemailer');
-
-const {config} = require('./config');
+const jsonConfig = require('./config/config.json');
 
 let transporter;
 
 function initMail () {
+  const config = configuration();
   const smtpConfig = {
     host: config.mail.smtp,
     port: config.mail.port,
@@ -52,8 +52,16 @@ function getIP (req) {
   return req.ip || req.headers['x-forwarded-for'] || req.connection.remoteAddress;
 }
 
+const environment = process.env.NODE_ENV || 'development';
+
+function configuration () {
+  return jsonConfig[environment];
+}
+
 module.exports = {
   initMail,
   sendMail,
-  getIP
+  getIP,
+  config: configuration(),
+  environment
 };

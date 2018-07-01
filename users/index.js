@@ -16,8 +16,7 @@ const {
 } = require('../database/sql');
 
 const {query} = require('../database/');
-const {sendMail} = require('../utils');
-const {config} = require('../config');
+const {sendMail, config} = require('../utils');
 const {getDecodedJwt, validatePassword} = require('../auth')
 
 async function validateEmail (request, response) {

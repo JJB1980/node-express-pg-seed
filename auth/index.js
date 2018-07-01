@@ -3,7 +3,7 @@ const passwordHash = require('password-hash');
 
 const {USER_SELECT} = require('../database/sql');
 const {query} = require('../database/');
-const {config: {auth: {jwtKey}}} = require('../config');
+const {config: {auth: {jwtKey}}} = require('../utils');
 const {getIP} = require('../utils');
 
 const whiteList = [

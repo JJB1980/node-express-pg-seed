@@ -3,11 +3,11 @@ const bodyParser = require('body-parser');
 const cors = require('cors');
 
 const {routes} = require('./routes');
-const {dbRoutes} = require('./database/routes');
+const {dbRoutes} = require('./data/routes');
 const {authRoutes} = require('./auth/routes');
 const {userRoutes} = require('./users/routes');
 const {authorizeHeader} = require('./auth/');
-const {closeConnection, initDB} = require('./database');
+const {closeConnection, initDB} = require('./data/pg');
 const {initMail} = require('./utils');
 const compression = require('compression');
 
@@ -37,10 +37,8 @@ initDB();
 
 const port = process.env.PORT || 8081;
 const server = app.listen(port, function () {
-  const host = server.address().address;
-  const port = server.address().port;
-
-  console.log(`Example app listening at http://${host}:${port}`);
+  const {address, port} = server.address()
+  console.log(`Example app listening at http://${address}:${port}`);
 });
 
 // ensure connections close in prod.

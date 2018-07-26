@@ -13,16 +13,16 @@ const {
   USER_EMAIL_OK_UPDATE,
   USER_UDPATE_PASSWORD,
   USERS_SELECT
-} = require('../database/sql');
+} = require('../data/constants');
 
-const {query} = require('../database/');
+const {dataApi} = require('../data');
 const {sendMail, config} = require('../utils');
 const {getDecodedJwt, validatePassword} = require('../auth')
 
 async function validateEmail (request, response) {
   const {email} = request.body;
   try {
-    const result = await query(USER_VALIDATE_EMAIL, [email]);
+    const result = await dataApi(USER_VALIDATE_EMAIL, [email]);
     if (result.length) {
       response.json({success: false, error: 'Email already taken.'});
     } else {
@@ -41,7 +41,7 @@ async function signup (request, response) {
   }
   const hashedPassword = passwordHash.generate(password);
   try {
-    const result = await query(USER_INSERT, [firstname, lastname, mobile, email, hashedPassword]);
+    const result = await dataApi(USER_INSERT, [firstname, lastname, mobile, email, hashedPassword]);
     if (result) {
       response.json({success: true});
     } else {
@@ -60,14 +60,14 @@ async function signup (request, response) {
 async function requestPasswordReset (request, response) {
   const {email} = request.body;
   try {
-    const result = await query(USER_SELECT, [email]);
+    const result = await dataApi(USER_SELECT, [email]);
     if (result.length) {
       const token = uuid();
       const url = `${config.host}/resetPassword/${token}`;
       const mailResult = await sendMail(email, 'Reset password.', `<a href="${url}">Reset password</a>.`);
       console.log('mailResult :::', mailResult);
       if (mailResult.success) {
-        const queryResult = await query(USER_REQUEST_RESET_PASSWORD, [token, email]);
+        const queryResult = await dataApi(USER_REQUEST_RESET_PASSWORD, [token, email]);
         if (queryResult) {
           response.json({success: true});
         } else {
@@ -87,7 +87,7 @@ async function requestPasswordReset (request, response) {
 
 async function validateResetPassword (request, response) {
   const {token} = request.params;
-  const result = await query(USER_VALIDATE_PASSWORD_RESET_TOKEN, [token]);
+  const result = await dataApi(USER_VALIDATE_PASSWORD_RESET_TOKEN, [token]);
   if (result.length) {
     const {email} = result[0];
     response.json({success: true, email});
@@ -100,10 +100,10 @@ async function resetPassword (request, response) {
   const {token} = request.params;
   const {email, password} = request.body;
   try {
-    const tokenResult = await query(USER_VALIDATE_PASSWORD_RESET_TOKEN, [token]);
+    const tokenResult = await dataApi(USER_VALIDATE_PASSWORD_RESET_TOKEN, [token]);
     if (tokenResult.length && tokenResult[0].email === email) {
       const hashedPassword = passwordHash.generate(password);
-      await query(USER_RESET_PASSWORD, [hashedPassword, email]);
+      await dataApi(USER_RESET_PASSWORD, [hashedPassword, email]);
       response.json({success: true});
     } else {
       response.json({success: false, error: 'Invalid token and email.'});
@@ -116,7 +116,7 @@ async function resetPassword (request, response) {
 async function fetchProfile (request, response) {
   const {id} = getDecodedJwt(request);
   try {
-    const result = await query(USER_SELECT_PROFILE, [id]);
+    const result = await dataApi(USER_SELECT_PROFILE, [id]);
     if (result.length) {
       response.json({success: true, data: {...result[0]}})
     } else {
@@ -131,12 +131,12 @@ async function updateProfile (request, response) {
   const {id} = getDecodedJwt(request);
   const {firstname, lastname, email, mobile} = request.body;
   try {
-    const result = await query(USER_EMAIL_OK_UPDATE, [email, id]);
+    const result = await dataApi(USER_EMAIL_OK_UPDATE, [email, id]);
     if (result.length) {
       response.json({success: false, error: 'Email already taken.'})
       return;
     }
-    await query(USER_UPDATE_PROFILE, [firstname, lastname, email, mobile, id]);
+    await dataApi(USER_UPDATE_PROFILE, [firstname, lastname, email, mobile, id]);
     response.json({success: true});
   } catch (error) {
     response.json({success: false, error: error.message})
@@ -147,14 +147,14 @@ async function updatePassword (request, response) {
   const {password, confirmPassword} = request.body;
   const {email, id} = getDecodedJwt(request);
   try {
-    const result = await query(USER_SELECT, [email]);
+    const result = await dataApi(USER_SELECT, [email]);
     const {password: verifyPassword} = result[0];
     if (!validatePassword(confirmPassword, verifyPassword)) {
       response.json({success: false, error: 'Invalid password.'})
       return;
     }
     const hashedPassword = passwordHash.generate(password);
-    await query(USER_UDPATE_PASSWORD, [hashedPassword, id]);
+    await dataApi(USER_UDPATE_PASSWORD, [hashedPassword, id]);
     response.json({success: true});
   } catch (error) {
     response.json({success: false, error: error.message})
@@ -169,7 +169,7 @@ async function selectUsers (request, response) {
       response.json({success: false, error: 'Not authorized.'});
       return;
     }
-    const users = await query(USERS_SELECT);
+    const users = await dataApi(USERS_SELECT);
     response.json({success: true, data: users})
   } catch (error) {
     response.json({success: false, error: error.message})

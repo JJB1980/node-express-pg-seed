@@ -1,4 +1,4 @@
-const {query} = require('./');
+const {query} = require('./pg');
 const sqlInstall = require('./install');
 // const passwordHash = require('password-hash');
 

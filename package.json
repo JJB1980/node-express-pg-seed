@@ -7,11 +7,11 @@
     "test": "mocha . --exit",
     "lint": "node_modules/.bin/eslint --fix",
     "dev": "NODE_ENV=development nodemon .",
-    "start": "NODE_ENV=production npx nodemon .",
+    "start": "NODE_ENV=production node .",
     "pm2-start": "pm2 start ./index.js",
     "pm2-stop": "pm2 stop ./index.js",
     "docker-build": "docker build -t jjb1980/node-pg-seed . && docker push jjb1980/node-pg-seed",
-    "docker-run": "docker run --rm --name node-pg-seed -p 8081:8081 -d jjb1980/node-pg-seed",
+    "docker-run": "docker run --rm --name node-pg-seed -p 127.0.0.1:8081:8081 -d jjb1980/node-pg-seed",
     "docker-stop": "docker stop node-pg-seed"
   },
   "author": "John Bowden",

@@ -35,7 +35,7 @@ function userRoutes (app) {
     fetchProfile(request, response);
   });
 
-  app.post('/user/updateProfile', (request, response) => {
+  app.patch('/user/updateProfile', (request, response) => {
     updateProfile(request, response);
   });
 

@@ -1,8 +1,8 @@
 const jwt = require('jsonwebtoken');
 const passwordHash = require('password-hash');
 
-const {USER_SELECT} = require('../database/sql');
-const {query} = require('../database/');
+const {USER_SELECT} = require('../data/constants');
+const {dataApi} = require('../data');
 const {config: {auth: {jwtKey}}} = require('../utils');
 const {getIP} = require('../utils');
 
@@ -68,7 +68,7 @@ function validatePassword (password, verifyPassword) {
 async function login (request, response) {
   try {
     const {email, password} = request.body;
-    const result = await query(USER_SELECT, [email]);
+    const result = await dataApi(USER_SELECT, [email]);
     if (!result.length) {
       response.status(401);
       response.json({sucess: false, error: 'Invalid user.'});

@@ -55,7 +55,7 @@ function getIP (req) {
 const environment = process.env.NODE_ENV || 'development';
 
 function configuration () {
-  return jsonConfig[environment];
+  return jsonConfig[environment === 'test' ? 'development' : environment];
 }
 
 module.exports = {

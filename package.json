@@ -4,7 +4,8 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "mocha . --exit",
+    "test": "NODE_ENV=test mocha ./test/suite/**/* --recursive --require ./test/bootstrap.js  --exit",
+    "test-watch": "NODE_ENV=test mocha ./test/suite/**/* --recursive --require ./test/bootstrap.js  --watch",
     "lint": "node_modules/.bin/eslint --fix",
     "dev": "NODE_ENV=development nodemon .",
     "start": "NODE_ENV=production node .",
@@ -31,6 +32,11 @@
     "uuid": "^3.2.1"
   },
   "devDependencies": {
-    "eslint": "^4.19.1"
+    "chai": "^4.1.2",
+    "dirty-chai": "^2.0.1",
+    "eslint": "^4.19.1",
+    "mocha": "^5.2.0",
+    "sinon": "^6.1.4",
+    "sinon-chai": "^3.2.0"
   }
 }

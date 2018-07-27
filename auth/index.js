@@ -78,7 +78,7 @@ async function login (request, response) {
     const verified = validatePassword(password, verifyPassword);
     if (!verified) {
       response.status(401);
-      response.json({sucess: false, error: 'Invalid password.'});
+      response.json({success: false, error: 'Invalid password.'});
       return;
     }
     const ua = request.headers['user-agent'];

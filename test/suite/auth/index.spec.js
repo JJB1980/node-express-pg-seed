@@ -39,9 +39,15 @@ describe ('auth module tests', () => {
     let response = {
       json: sinon.spy()
     };
+
     await api.login(request, response);
 
     expect(response.json).to.have.been.calledOnce();
+
+    const args = response.json.getCall(0).args[0];
+
+    expect(args.success).to.be.true();
+    expect(args.data.firstname).to.equal('joe');
   });
 
   it ('should fail login user', async () => {
@@ -59,9 +65,15 @@ describe ('auth module tests', () => {
       json: sinon.spy(),
       status: sinon.spy()
     };
+
     await api.login(request, response);
 
-    expect(response.status).to.have.been.calledWith(401);
     expect(response.json).to.have.been.calledOnce();
+    expect(response.status).to.have.been.calledWith(401);
+
+    const args = response.json.getCall(0).args[0];
+
+    expect(args.success).to.be.false();
+    expect(args.error).to.equal('Invalid password.');
   });
 });

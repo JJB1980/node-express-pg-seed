@@ -6,6 +6,7 @@
   "scripts": {
     "test": "NODE_ENV=test mocha ./test/suite/**/* --recursive --require ./test/bootstrap.js  --exit",
     "test-watch": "NODE_ENV=test mocha ./test/suite/**/* --recursive --require ./test/bootstrap.js  --watch",
+    "coverage": "node_modules/.bin/nyc npm test",
     "lint": "node_modules/.bin/eslint --fix",
     "dev": "NODE_ENV=development nodemon .",
     "start": "NODE_ENV=production node .",
@@ -36,6 +37,7 @@
     "dirty-chai": "^2.0.1",
     "eslint": "^4.19.1",
     "mocha": "^5.2.0",
+    "nyc": "^12.0.2",
     "sinon": "^6.1.4",
     "sinon-chai": "^3.2.0"
   }

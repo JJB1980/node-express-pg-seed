@@ -1,8 +1,8 @@
 const passwordHash = require('password-hash');
 const jwt = require('jsonwebtoken');
 
-const {config: {auth: {jwtKey}}} = require('../../../utils');
-const api = require('../../../auth');
+const {config: {auth: {jwtKey}}} = require('../../../src/utils');
+const api = require('../../../src/auth');
 
 const PASSWORD = 'test';
 const JWT_OBJ = {email: 'test@test.com', isAdmin: true, ua: 'asdf', ip: '1', firstname: 'joe', lastname: 'blogs', id: 1};

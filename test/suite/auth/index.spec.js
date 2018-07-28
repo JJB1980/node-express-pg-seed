@@ -45,6 +45,15 @@ describe ('auth module tests', () => {
       };
     });
 
+    it ('should fail login user', async () => {
+      request.body.email = 'fail';
+
+      await api.login(request, response);
+
+      expect(response.status).to.have.been.calledWith(401);
+      expect(response.json).to.have.been.calledOnce();
+    });
+
     it ('should login user', async () => {
       await api.login(request, response);
 
@@ -89,14 +98,14 @@ describe ('auth module tests', () => {
       };
     });
 
-    it ('should failwhen invalid  authorise header.', () => {
+    it ('should fail when invalid..', () => {
       api.authorizeHeader(request, response);
 
       expect(response.status).to.be.calledWith(401);
       expect(response.json).to.be.calledWith({error: 'Invalid token.'});
     });
 
-    it ('should fail when no authorise header.', () => {
+    it ('should fail when no header.', () => {
       request.headers.authorization = null;
 
       api.authorizeHeader(request, response);
@@ -105,7 +114,7 @@ describe ('auth module tests', () => {
       expect(response.json).to.be.calledWith({error: 'No authorization token.'});
     });
 
-    it ('should fail when authorise headers dont match.', () => {
+    it ('should fail when headers dont match.', () => {
       request.headers.authorization = JWT_TOKEN;
       request.ip = 'fail';
 
@@ -115,7 +124,25 @@ describe ('auth module tests', () => {
       expect(response.json).to.be.calledWith({error: 'Config does not match.'});
     });
 
-    it ('should authorise header.', () => {
+    it ('should pass through when whitelisted route.', () => {
+      request.originalUrl ='/auth/login';
+
+      const result = api.authorizeHeader(request, response);
+
+      expect(result.success).to.be.true();
+    });
+
+    it ('should fail when admin route.', () => {
+      request.headers.authorization = JWT_TOKEN;
+      request.originalUrl = '/database';
+
+      api.authorizeHeader(request, response);
+
+      expect(response.status).to.be.calledWith(401);
+      expect(response.json).to.be.calledWith({error: 'Unauthorized.'});
+    });
+
+    it ('should authorise.', () => {
       request.headers.authorization = JWT_TOKEN;
 
       const result = api.authorizeHeader(request, response);

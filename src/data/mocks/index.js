@@ -17,7 +17,10 @@ const {
 function stubData (action, args) {
   switch (action) {
     case USER_SELECT:
-      return [{password: passwordHash.generate('test'), admin: true, firstname: 'joe', lastname: 'blogs', id: 1}];
+      if (args[0] === 'test@test.com')
+        return [{password: passwordHash.generate('test'), admin: true, firstname: 'joe', lastname: 'blogs', id: 1}];
+      else
+        return [];
 
     default:
       return {};

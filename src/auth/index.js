@@ -14,14 +14,13 @@ const whiteList = [
   '/user/validateResetPassword',
   '/user/resetPassword',
   '/user/validateEmail',
-  '/database'
 ];
 const adminRoutes = [
   '/database'
 ];
 
 function authorizeHeader (request, response) {
-  if (whiteList.find(path => request.originalUrl.indexOf(path) >= 0)) {
+  if (whiteList.find(path => request.originalUrl === path)) {
     return {success: true};
   }
   const {authorization} = request.headers;
@@ -33,7 +32,8 @@ function authorizeHeader (request, response) {
   try {
     const decoded = jwt.verify(authorization, jwtKey);
     const {isAdmin, ua: jwtUa, ip: jwtIp, firstname, lastname, id} = decoded;
-    if (adminRoutes.find(path => request.originalUrl.indexOf(path) >= 1) && !isAdmin) {
+    const adminRoute = adminRoutes.find(path => request.originalUrl === path);
+    if (adminRoute && !isAdmin) {
       response.status(401);
       response.json({error: 'Unauthorized.'});
       return false;

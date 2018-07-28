@@ -65,7 +65,7 @@ async function requestPasswordReset (request, response) {
       const token = uuid();
       const url = `${config.host}/resetPassword/${token}`;
       const mailResult = await sendMail(email, 'Reset password.', `<a href="${url}">Reset password</a>.`);
-      console.log('mailResult :::', mailResult);
+      // console.log('mailResult :::', mailResult);
       if (mailResult.success) {
         const queryResult = await dataApi(USER_REQUEST_RESET_PASSWORD, [token, email]);
         if (queryResult) {
@@ -80,7 +80,7 @@ async function requestPasswordReset (request, response) {
       response.json({success: false, error: 'Invalid user.'});
     }
   } catch (error) {
-    console.log('error :::', error);
+    // console.log('error :::', error);
     response.json({success: false, error: 'Error sending email.'});
   }
 }

@@ -20,6 +20,8 @@ function initMail () {
 }
 
 function sendMail (to, subject, html) {
+  const config = configuration();
+
   // setup e-mail data with unicode symbols
   var mailOptions = {
     // sender address
@@ -34,7 +36,15 @@ function sendMail (to, subject, html) {
     html
   };
 
-  console.log(mailOptions);
+  // console.log(mailOptions);
+
+  if (process.env.NODE_ENV === 'test') {
+    return new Promise((resolve) => {
+      if (to === 'error') throw new Error('test return error');
+      const success = to === 'test@test.com' || to === 'test2@test.com';
+      setTimeout(resolve.bind(null, {success}), 100);
+    });
+  }
 
   return new Promise((resolve, reject) => {
     transporter.sendMail(mailOptions, (error, info) => {

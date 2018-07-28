@@ -1,6 +1,7 @@
 const express = require('express');
 const bodyParser = require('body-parser');
 const cors = require('cors');
+const compression = require('compression');
 
 const {routes} = require('./routes');
 const {dbRoutes} = require('./data/routes');
@@ -9,7 +10,6 @@ const {userRoutes} = require('./users/routes');
 const {authorizeHeader} = require('./auth/');
 const {closeConnection, initDB} = require('./data/pg');
 const {initMail} = require('./utils');
-const compression = require('compression');
 
 const app = express();
 

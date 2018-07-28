@@ -17,7 +17,7 @@ const {
 function stubData (action, args) {
   switch (action) {
     case USER_SELECT:
-      if (args[0] === 'test@test.com')
+      if (args[0] === 'test@test.com' || args[0] === 'error' || args[0] === 'test' || args[0] === 'test2@test.com')
         return [{password: passwordHash.generate('test'), admin: true, firstname: 'joe', lastname: 'blogs', id: 1}];
       else
         return [];
@@ -28,8 +28,22 @@ function stubData (action, args) {
       else
         return [];
 
+    case USER_INSERT:
+      if (args[0] === 'fail')
+        return false
+      else if (args[0] === 'error')
+        throw new Error('duplicate key');
+      else
+        return true;
+
+    case USER_REQUEST_RESET_PASSWORD:
+      if (args[1] === 'test@test.com')
+        return true;
+      else
+        return false;
+
     default:
-      return {};
+      throw new Error('action not available');
   }
 }
 

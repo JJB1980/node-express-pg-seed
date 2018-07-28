@@ -1,6 +1,5 @@
 const {query} = require('./pg');
 const sqlInstall = require('./install');
-// const passwordHash = require('password-hash');
 
 function dbRoutes (app) {
   app.get('/database/test', async (request, response) => {

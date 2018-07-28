@@ -22,6 +22,12 @@ function stubData (action, args) {
       else
         return [];
 
+    case USER_VALIDATE_EMAIL:
+      if (args[0] === 'test@test.com')
+        return [{user: 'taken'}]
+      else
+        return [];
+
     default:
       return {};
   }

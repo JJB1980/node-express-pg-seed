@@ -31,7 +31,7 @@ describe ('auth module tests', () => {
     beforeEach (() => {
       request = {
         body: {
-          email: 'test@test.com',
+          email: JWT_OBJ.email,
           password: 'test'
         },
         headers: {
@@ -45,7 +45,7 @@ describe ('auth module tests', () => {
       };
     });
 
-    it ('should fail login user', async () => {
+    it ('should fail login user with invalid email', async () => {
       request.body.email = 'fail';
 
       await api.login(request, response);
@@ -54,18 +54,7 @@ describe ('auth module tests', () => {
       expect(response.json).to.have.been.calledOnce();
     });
 
-    it ('should login user', async () => {
-      await api.login(request, response);
-
-      expect(response.json).to.have.been.calledOnce();
-
-      const args = response.json.getCall(0).args[0];
-
-      expect(args.success).to.be.true();
-      expect(args.data.firstname).to.equal('joe');
-    });
-
-    it ('should fail login user', async () => {
+    it ('should fail login user with invalid password', async () => {
       request.body.password = 'fail';
 
       await api.login(request, response);
@@ -77,6 +66,17 @@ describe ('auth module tests', () => {
 
       expect(args.success).to.be.false();
       expect(args.error).to.equal('Invalid password.');
+    });
+
+    it ('should login user', async () => {
+      await api.login(request, response);
+
+      expect(response.json).to.have.been.calledOnce();
+
+      const args = response.json.getCall(0).args[0];
+
+      expect(args.success).to.be.true();
+      expect(args.data.firstname).to.equal('joe');
     });
   });
 

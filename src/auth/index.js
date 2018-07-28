@@ -86,7 +86,6 @@ async function login (request, response) {
     const token = jwt.sign({email, isAdmin: admin, ua, ip, firstname, lastname, id}, jwtKey);
     response.json({success: true, data: {token, isAdmin: admin, firstname, lastname}});
   } catch (e) {
-    console.log('error :::', e)
     response.status(401);
     response.json({success: false, error: e.toString()});
   }

@@ -14,8 +14,8 @@ const {
   USERS_SELECT
 } = require('../constants');
 
-function stubData (command, args) {
-  switch (command) {
+function stubData (action, args) {
+  switch (action) {
     case USER_SELECT:
       return [{password: passwordHash.generate('test'), admin: true, firstname: 'joe', lastname: 'blogs', id: 1}];
 

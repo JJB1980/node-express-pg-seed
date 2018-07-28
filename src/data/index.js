@@ -2,11 +2,11 @@ const sql = require('./sql');
 const {query} = require('./pg');
 const mocks = require('./mocks');
 
-async function dataApi (command, args = []) {
+async function dataApi (action, args = []) {
   if (process.env.NODE_ENV === 'test') {
-    return mocks.stubData(command, args);
+    return mocks.stubData(action, args);
   } else {
-    return await query(sql[command], args);
+    return await query(sql[action], args);
   }
 }
 

@@ -48,8 +48,8 @@ function sendMail (to, subject, html) {
   });
 }
 
-function getIP (req) {
-  return req.ip || req.headers['x-forwarded-for'] || req.connection.remoteAddress;
+function getIP (request) {
+  return request.ip || request.headers['x-forwarded-for'] || request.connection.remoteAddress;
 }
 
 const environment = process.env.NODE_ENV || 'development';

@@ -44,11 +44,12 @@ function authorizeHeader (request, response) {
         return {success: true, isAdmin, firstname, lastname};
       } else {
         response.status(401);
-        response.json({success: false, error: 'Config does not match.'});
+        response.json({error: 'Config does not match.'});
         return false;
       }
     }
   } catch (e) {
+    // console.log(e);
     response.status(401);
     response.json({error: 'Invalid token.'});
     return false;

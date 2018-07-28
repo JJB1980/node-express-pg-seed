@@ -5,7 +5,7 @@ const {config: {auth: {jwtKey}}} = require('../../../src/utils');
 const api = require('../../../src/auth');
 
 const PASSWORD = 'test';
-const JWT_OBJ = {email: 'test@test.com', isAdmin: true, ua: 'asdf', ip: '1', firstname: 'joe', lastname: 'blogs', id: 1};
+const JWT_OBJ = {email: 'test@test.com', isAdmin: false, ua: 'test', ip: 'localhost', firstname: 'joe', lastname: 'blogs', id: 1};
 const JWT_TOKEN = jwt.sign(JWT_OBJ, jwtKey);
 
 describe ('auth module tests', () => {
@@ -25,55 +25,102 @@ describe ('auth module tests', () => {
     expect(decoded.email).to.equal(JWT_OBJ.email);
   });
 
-  it ('should login user', async () => {
-    const request = {
-      body: {
-        email: 'test@test.com',
-        password: 'test'
-      },
-      headers: {
-        ['user-agent']: 'test'
-      },
-      ip: 'localhost'
-    };
-    let response = {
-      json: sinon.spy()
-    };
+  context ('with login', () => {
+    let request, response;
 
-    await api.login(request, response);
+    beforeEach (() => {
+      request = {
+        body: {
+          email: 'test@test.com',
+          password: 'test'
+        },
+        headers: {
+          ['user-agent']: 'test'
+        },
+        ip: 'localhost'
+      };
+      response = {
+        json: sinon.spy(),
+        status: sinon.spy()
+      };
+    });
 
-    expect(response.json).to.have.been.calledOnce();
+    it ('should login user', async () => {
+      await api.login(request, response);
 
-    const args = response.json.getCall(0).args[0];
+      expect(response.json).to.have.been.calledOnce();
 
-    expect(args.success).to.be.true();
-    expect(args.data.firstname).to.equal('joe');
+      const args = response.json.getCall(0).args[0];
+
+      expect(args.success).to.be.true();
+      expect(args.data.firstname).to.equal('joe');
+    });
+
+    it ('should fail login user', async () => {
+      request.body.password = 'fail';
+
+      await api.login(request, response);
+
+      expect(response.json).to.have.been.calledOnce();
+      expect(response.status).to.have.been.calledWith(401);
+
+      const args = response.json.getCall(0).args[0];
+
+      expect(args.success).to.be.false();
+      expect(args.error).to.equal('Invalid password.');
+    });
   });
 
-  it ('should fail login user', async () => {
-    const request = {
-      body: {
-        email: 'test@test.com',
-        password: 'fail-password'
-      },
-      headers: {
-        ['user-agent']: 'test'
-      },
-      ip: 'localhost'
-    };
-    let response = {
-      json: sinon.spy(),
-      status: sinon.spy()
-    };
+  context ('with authoriseHeaders', () => {
+    let request, response;
 
-    await api.login(request, response);
+    beforeEach(() => {
+      request = {
+        originalUrl: 'testurl',
+        ip: 'localhost',
+        headers: {
+          authorization: 'asdf',
+          ['user-agent']: 'test'
+        }
+      };
+      response = {
+        json: sinon.spy(),
+        status: sinon.spy()
+      };
+    });
 
-    expect(response.json).to.have.been.calledOnce();
-    expect(response.status).to.have.been.calledWith(401);
+    it ('should failwhen invalid  authorise header.', () => {
+      api.authorizeHeader(request, response);
 
-    const args = response.json.getCall(0).args[0];
+      expect(response.status).to.be.calledWith(401);
+      expect(response.json).to.be.calledWith({error: 'Invalid token.'});
+    });
 
-    expect(args.success).to.be.false();
-    expect(args.error).to.equal('Invalid password.');
+    it ('should fail when no authorise header.', () => {
+      request.headers.authorization = null;
+
+      api.authorizeHeader(request, response);
+
+      expect(response.status).to.be.calledWith(401);
+      expect(response.json).to.be.calledWith({error: 'No authorization token.'});
+    });
+
+    it ('should fail when authorise headers dont match.', () => {
+      request.headers.authorization = JWT_TOKEN;
+      request.ip = 'fail';
+
+      api.authorizeHeader(request, response);
+
+      expect(response.status).to.be.calledWith(401);
+      expect(response.json).to.be.calledWith({error: 'Config does not match.'});
+    });
+
+    it ('should authorise header.', () => {
+      request.headers.authorization = JWT_TOKEN;
+
+      const result = api.authorizeHeader(request, response);
+
+      expect(result.success).to.be.true();
+    });
   });
 });

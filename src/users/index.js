@@ -87,7 +87,8 @@ async function requestPasswordReset (request, response) {
 
 async function validateResetPassword (request, response) {
   const {token} = request.params;
-  const result = await dataApi(USER_VALIDATE_PASSWORD_RESET_TOKEN, [token]);
+  const {email} = request.body;
+  const result = await dataApi(USER_VALIDATE_PASSWORD_RESET_TOKEN, [token, email]);
   if (result.length) {
     const {email} = result[0];
     response.json({success: true, email});
@@ -100,7 +101,7 @@ async function resetPassword (request, response) {
   const {token} = request.params;
   const {email, password} = request.body;
   try {
-    const tokenResult = await dataApi(USER_VALIDATE_PASSWORD_RESET_TOKEN, [token]);
+    const tokenResult = await dataApi(USER_VALIDATE_PASSWORD_RESET_TOKEN, [token, email]);
     if (tokenResult.length && tokenResult[0].email === email) {
       const hashedPassword = passwordHash.generate(password);
       await dataApi(USER_RESET_PASSWORD, [hashedPassword, email]);

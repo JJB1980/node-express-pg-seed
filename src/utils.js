@@ -3,6 +3,7 @@ const jsonConfig = require('../config/config.json');
 
 let transporter;
 
+/* istanbul ignore next */
 function initMail () {
   const config = configuration();
   const smtpConfig = {
@@ -42,10 +43,11 @@ function sendMail (to, subject, html) {
     return new Promise((resolve) => {
       if (to === 'error') throw new Error('test return error');
       const success = to === 'test@test.com' || to === 'test2@test.com';
-      setTimeout(resolve.bind(null, {success}), 100);
+      setTimeout(resolve.bind(null, {success}), 10);
     });
   }
 
+  /* istanbul ignore next */
   return new Promise((resolve, reject) => {
     transporter.sendMail(mailOptions, (error, info) => {
       console.log(info);

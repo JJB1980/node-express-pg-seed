@@ -1,12 +1,12 @@
+/* istanbul ignore file */
 const { Pool } = require('pg');
 const {config} = require('../utils');
 
-const dbConfig = config.database;
 let pool = null;
 
 function initDB () {
-  if (!process.env.production) {
-    pool = new Pool({...dbConfig});
+  if (process.env.NODE_ENV !== 'production') {
+    pool = new Pool({...config.database});
   } else {
     pool = new Pool();
   }

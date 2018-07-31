@@ -49,8 +49,8 @@ function mockUserData (action, args) {
         return [];
 
     case USER_RESET_PASSWORD:
-      if (args[1] === 'test2')
-        throw new Error('failed');
+      if (args[1] === 'error')
+        throw new Error('error');
       else
         return [];
 
@@ -58,7 +58,7 @@ function mockUserData (action, args) {
       if (args[0] === 2)
         return [];
       else if (args[0] === 3)
-        throw new Error('fail');
+        throw new Error('error');
       else
         return [{email: 'test'}];
 
@@ -66,7 +66,7 @@ function mockUserData (action, args) {
       if (args[1] === 1)
         return [];
       else if (args[1] === 2)
-        throw new Error('fail');
+        throw new Error('error');
       else
         return [{email: 'a'}];
 
@@ -75,7 +75,7 @@ function mockUserData (action, args) {
 
     case USER_UDPATE_PASSWORD:
       if (args[1] === 2)
-        throw new Error('fail');
+        throw new Error('error');
       else
         return true;
 

@@ -200,10 +200,10 @@ describe ('users module tests', () => {
     });
 
     it ('should fail on reset', async () => {
-      request.body.email = 'test2';
+      request.body.email = 'error';
       await api.resetPassword(request, response);
 
-      expect (response.json).to.be.calledWith({success: false, error: 'failed'});
+      expect (response.json).to.be.calledWith({success: false, error: 'error'});
     });
   });
 
@@ -240,7 +240,7 @@ describe ('users module tests', () => {
       request.headers.authorization = jwt.sign(token, jwtKey);
       await api.fetchProfile(request, response);
 
-      expect (response.json).to.be.calledWith({success: false, error: 'fail'});
+      expect (response.json).to.be.calledWith({success: false, error: 'error'});
     });
   });
 
@@ -270,7 +270,7 @@ describe ('users module tests', () => {
       request.headers.authorization = jwt.sign(token, jwtKey);
       await api.updateProfile(request, response);
 
-      expect (response.json).to.be.calledWith({success: false, error: 'fail'});
+      expect (response.json).to.be.calledWith({success: false, error: 'error'});
     });
 
     it ('should not update profile, invalid email', async () => {
@@ -315,7 +315,7 @@ describe ('users module tests', () => {
       request.headers.authorization = jwt.sign(token, jwtKey);
       await api.updatePassword(request, response);
 
-      expect (response.json).to.be.calledWith({success: false, error: 'fail'});
+      expect (response.json).to.be.calledWith({success: false, error: 'error'});
     });
   });
 

@@ -16,7 +16,8 @@ const {
 } = require('../data/constants');
 
 const {dataApi} = require('../data');
-const {sendMail, config} = require('../utils');
+const {config} = require('../utils');
+const {sendMail} = require('../utils/mail');
 const {getDecodedJwt, validatePassword} = require('../auth')
 
 async function validateEmail (request, response) {

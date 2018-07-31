@@ -12,9 +12,9 @@ const {
   USER_EMAIL_OK_UPDATE,
   USER_UDPATE_PASSWORD,
   USERS_SELECT
-} = require('../constants');
+} = require('../data/constants');
 
-function stubUserData (action, args) {
+function mockUserData (action, args) {
   switch (action) {
     case USER_SELECT:
       if (/(test@test.com|test2@test.com|error|test)/g.exec(args[0]))
@@ -88,5 +88,5 @@ function stubUserData (action, args) {
 }
 
 module.exports = {
-  stubUserData
+  mockUserData
 };

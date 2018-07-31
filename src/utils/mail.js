@@ -1,11 +1,12 @@
 const nodemailer = require('nodemailer');
-const jsonConfig = require('../config/config.json');
+const jsonConfig = require('../../config/config.json');
+
+const {environment, config} = require('./');
 
 let transporter;
 
 /* istanbul ignore next */
 function initMail () {
-  const config = configuration();
   const smtpConfig = {
     host: config.mail.smtp,
     port: config.mail.port,
@@ -21,8 +22,6 @@ function initMail () {
 }
 
 function sendMail (to, subject, html) {
-  const config = configuration();
-
   // setup e-mail data with unicode symbols
   var mailOptions = {
     // sender address
@@ -39,7 +38,7 @@ function sendMail (to, subject, html) {
 
   // console.log(mailOptions);
 
-  if (process.env.NODE_ENV === 'test') {
+  if (environment === 'test') {
     return new Promise((resolve) => {
       if (to === 'error') throw new Error('test return error');
       const success = to === 'test@test.com' || to === 'test2@test.com';
@@ -60,20 +59,7 @@ function sendMail (to, subject, html) {
   });
 }
 
-function getIP (request) {
-  return request.ip || request.headers['x-forwarded-for'] || request.connection.remoteAddress;
-}
-
-const environment = process.env.NODE_ENV || 'development';
-
-function configuration () {
-  return jsonConfig[environment === 'test' ? 'development' : environment];
-}
-
 module.exports = {
   initMail,
-  sendMail,
-  getIP,
-  config: configuration(),
-  environment
+  sendMail
 };

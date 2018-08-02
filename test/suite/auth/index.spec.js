@@ -3,6 +3,7 @@ const jwt = require('jsonwebtoken');
 
 const {config: {auth: {jwtKey}}} = require('../../../src/utils');
 const api = require('../../../src/auth');
+const common = require('../../../src/auth/common');
 
 const PASSWORD = 'test';
 const JWT_OBJ = {email: 'test@test.com', isAdmin: false, ua: 'test', ip: 'localhost', firstname: 'joe', lastname: 'blogs', id: 1};
@@ -12,14 +13,14 @@ describe ('auth module tests', () => {
   it ('should validate password', () => {
     const hashedPassword = passwordHash.generate(PASSWORD);
 
-    expect(api.validatePassword(PASSWORD, hashedPassword)).to.be.true();
+    expect(common.validatePassword(PASSWORD, hashedPassword)).to.be.true();
   });
 
   it ('should decode jwt token', () => {
     const request = {
       headers: {authorization: JWT_TOKEN}
     };
-    const decoded = api.getDecodedJwt(request);
+    const decoded = common.getDecodedJwt(request);
 
     expect(decoded.firstname).to.equal(JWT_OBJ.firstname);
     expect(decoded.email).to.equal(JWT_OBJ.email);

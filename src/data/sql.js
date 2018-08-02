@@ -10,7 +10,7 @@ const {
   USER_EMAIL_OK_UPDATE,
   USER_UDPATE_PASSWORD,
   USERS_SELECT
-} = require('./constants');
+} = require('./actions');
 
 module.exports = {
   [USER_SELECT]: 'SELECT * FROM users WHERE email = $1;',

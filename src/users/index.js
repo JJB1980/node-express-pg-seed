@@ -13,17 +13,17 @@ const {
   USER_EMAIL_OK_UPDATE,
   USER_UDPATE_PASSWORD,
   USERS_SELECT
-} = require('../data/constants');
+} = require('../data/actions');
 
 const {dataApi} = require('../data');
 const {config} = require('../utils');
 const {sendMail} = require('../utils/mail');
-const {getDecodedJwt, validatePassword} = require('../auth')
+const {getDecodedJwt, validatePassword} = require('../auth/common');
 
 async function validateEmail (request, response) {
   const {email} = request.body;
   try {
-    const result = await dataApi(USER_VALIDATE_EMAIL, [email]);
+    const result = await dataApi(USER_VALIDATE_EMAIL, [email], request);
     if (result.length) {
       response.json({success: false, error: 'Email already taken.'});
     } else {
@@ -42,7 +42,7 @@ async function signup (request, response) {
   }
   const hashedPassword = passwordHash.generate(password);
   try {
-    const result = await dataApi(USER_INSERT, [firstname, lastname, mobile, email, hashedPassword]);
+    const result = await dataApi(USER_INSERT, [firstname, lastname, mobile, email, hashedPassword], request);
     if (result) {
       response.json({success: true});
     } else {
@@ -61,14 +61,14 @@ async function signup (request, response) {
 async function requestPasswordReset (request, response) {
   const {email} = request.body;
   try {
-    const result = await dataApi(USER_SELECT, [email]);
+    const result = await dataApi(USER_SELECT, [email], request);
     if (result.length) {
       const token = uuid();
       const url = `${config.host}/resetPassword/${token}`;
       const mailResult = await sendMail(email, 'Reset password.', `<a href="${url}">Reset password</a>.`);
       // console.log('mailResult :::', mailResult);
       if (mailResult.success) {
-        const queryResult = await dataApi(USER_REQUEST_RESET_PASSWORD, [token, email]);
+        const queryResult = await dataApi(USER_REQUEST_RESET_PASSWORD, [token, email], request);
         if (queryResult) {
           response.json({success: true});
         } else {
@@ -89,7 +89,7 @@ async function requestPasswordReset (request, response) {
 async function validateResetPassword (request, response) {
   const {token} = request.params;
   const {email} = request.body;
-  const result = await dataApi(USER_VALIDATE_PASSWORD_RESET_TOKEN, [token, email]);
+  const result = await dataApi(USER_VALIDATE_PASSWORD_RESET_TOKEN, [token, email], request);
   if (result.length) {
     const {email} = result[0];
     response.json({success: true, email});
@@ -102,10 +102,10 @@ async function resetPassword (request, response) {
   const {token} = request.params;
   const {email, password} = request.body;
   try {
-    const tokenResult = await dataApi(USER_VALIDATE_PASSWORD_RESET_TOKEN, [token, email]);
+    const tokenResult = await dataApi(USER_VALIDATE_PASSWORD_RESET_TOKEN, [token, email], request);
     if (tokenResult.length && tokenResult[0].email === email) {
       const hashedPassword = passwordHash.generate(password);
-      await dataApi(USER_RESET_PASSWORD, [hashedPassword, email]);
+      await dataApi(USER_RESET_PASSWORD, [hashedPassword, email], request);
       response.json({success: true});
     } else {
       response.json({success: false, error: 'Invalid token and email.'});
@@ -118,7 +118,7 @@ async function resetPassword (request, response) {
 async function fetchProfile (request, response) {
   const {id} = getDecodedJwt(request);
   try {
-    const result = await dataApi(USER_SELECT_PROFILE, [id]);
+    const result = await dataApi(USER_SELECT_PROFILE, [id], request);
     if (result.length) {
       response.json({success: true, data: {...result[0]}})
     } else {
@@ -133,7 +133,7 @@ async function updateProfile (request, response) {
   const {id} = getDecodedJwt(request);
   const {firstname, lastname, email, mobile} = request.body;
   try {
-    const result = await dataApi(USER_EMAIL_OK_UPDATE, [email, id]);
+    const result = await dataApi(USER_EMAIL_OK_UPDATE, [email, id], request);
     if (result.length) {
       response.json({success: false, error: 'Email already taken.'})
       return;
@@ -149,14 +149,14 @@ async function updatePassword (request, response) {
   const {password, confirmPassword} = request.body;
   const {email, id} = getDecodedJwt(request);
   try {
-    const result = await dataApi(USER_SELECT, [email]);
+    const result = await dataApi(USER_SELECT, [email], request);
     const {password: verifyPassword} = result[0];
     if (!validatePassword(confirmPassword, verifyPassword)) {
       response.json({success: false, error: 'Invalid password.'})
       return;
     }
     const hashedPassword = passwordHash.generate(password);
-    await dataApi(USER_UDPATE_PASSWORD, [hashedPassword, id]);
+    await dataApi(USER_UDPATE_PASSWORD, [hashedPassword, id], request);
     response.json({success: true});
   } catch (error) {
     response.json({success: false, error: error.message})
@@ -171,7 +171,7 @@ async function selectUsers (request, response) {
       response.json({success: false, error: 'Not authorized.'});
       return;
     }
-    const users = await dataApi(USERS_SELECT);
+    const users = await dataApi(USERS_SELECT, [], request);
     response.json({success: true, data: users})
   } catch (error) {
     response.json({success: false, error: error.message})

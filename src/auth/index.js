@@ -1,10 +1,9 @@
 const jwt = require('jsonwebtoken');
-const passwordHash = require('password-hash');
 
-const {USER_SELECT} = require('../data/constants');
+const {USER_SELECT} = require('../data/actions');
 const {dataApi} = require('../data');
-const {config: {auth: {jwtKey}}} = require('../utils');
 const {getIP} = require('../utils');
+const {getDecodedJwt, validatePassword} = require('./common');
 
 const whiteList = [
   '/auth/login',
@@ -30,7 +29,7 @@ function authorizeHeader (request, response) {
     return false;
   }
   try {
-    const decoded = jwt.verify(authorization, jwtKey);
+    const decoded = getDecodedJwt(request);
     const {isAdmin, ua: jwtUa, ip: jwtIp, firstname, lastname, id} = decoded;
     const adminRoute = adminRoutes.find(path => request.originalUrl === path);
     if (adminRoute && !isAdmin) {
@@ -56,20 +55,10 @@ function authorizeHeader (request, response) {
   }
 }
 
-function getDecodedJwt (request) {
-  const {authorization} = request.headers;
-  const decoded = jwt.verify(authorization, jwtKey);
-  return decoded;
-}
-
-function validatePassword (password, verifyPassword) {
-  return passwordHash.verify(password, verifyPassword);
-}
-
 async function login (request, response) {
   try {
     const {email, password} = request.body;
-    const result = await dataApi(USER_SELECT, [email]);
+    const result = await dataApi(USER_SELECT, [email], request);
     if (!result.length) {
       response.status(401);
       response.json({sucess: false, error: 'Invalid user.'});
@@ -94,7 +83,5 @@ async function login (request, response) {
 
 module.exports = {
   authorizeHeader,
-  login,
-  getDecodedJwt,
-  validatePassword
+  login
 };

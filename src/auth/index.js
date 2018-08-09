@@ -2,7 +2,7 @@ const jwt = require('jsonwebtoken');
 
 const {USER_SELECT} = require('../data/actions');
 const {dataApi} = require('../data');
-const {getIP} = require('../utils');
+const {getIP, config: {auth: {jwtKey}}} = require('../utils');
 const {getDecodedJwt, validatePassword} = require('./common');
 
 const whiteList = [

@@ -1,8 +1,16 @@
 const dateFns = require('date-fns');
+const fs = require('fs');
+const path = require('path');
 
-const {getDecodedJwt} = require('../auth/common');
+let logStream = null;
 
-function log (action, args, source, request = {headers: {}}) {
+function initLogger () {
+  const file = '/var/log/example-app.log';
+  logStream = fs.createWriteStream(file, {'flags': 'a'});
+}
+
+function log (action, args, source, user) {
+  if (!logStream) return;
   const date = new Date();
   const obj = {
     date: dateFns.format(date, 'YYYY-MM-DD'),
@@ -10,11 +18,12 @@ function log (action, args, source, request = {headers: {}}) {
     source,
     action,
     args,
-    user: getDecodedJwt(request).id
+    user
   };
-  console.log(JSON.stringify(obj));
+  logStream.write(JSON.stringify(obj) + '\n');
 }
 
 module.exports = {
+  initLogger,
   log
 };

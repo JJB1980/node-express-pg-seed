@@ -138,7 +138,7 @@ async function updateProfile (request, response) {
       response.json({success: false, error: 'Email already taken.'})
       return;
     }
-    await dataApi(USER_UPDATE_PROFILE, [firstname, lastname, email, mobile, id]);
+    await dataApi(USER_UPDATE_PROFILE, [firstname, lastname, email, mobile, id], request);
     response.json({success: true});
   } catch (error) {
     response.json({success: false, error: error.message})

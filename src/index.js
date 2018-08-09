@@ -9,6 +9,7 @@ const {userRoutes} = require('./users/routes');
 const {authorizeHeader} = require('./auth/');
 const {closeConnection, initDB} = require('./data/pg');
 const {initMail} = require('./utils/mail');
+const {initLogger} = require('./utils/logger');
 
 const app = express();
 
@@ -32,6 +33,7 @@ userRoutes(app);
 // initialisation
 initMail();
 initDB();
+initLogger();
 
 const port = process.env.PORT || 8081;
 const server = app.listen(port, function () {

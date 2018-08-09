@@ -12,7 +12,7 @@ const {
   USER_EMAIL_OK_UPDATE,
   USER_UDPATE_PASSWORD,
   USERS_SELECT
-} = require('../data/actions');
+} = require('../actions');
 
 function mockUserData (action, args) {
   switch (action) {

@@ -83,7 +83,7 @@ function mockUserData (action, args) {
       return [{test: 'a'}];
 
     default:
-      throw new Error('action not available');
+      throw new Error('NA');
   }
 }
 

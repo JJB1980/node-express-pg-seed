@@ -1,6 +1,6 @@
 const jwt = require('jsonwebtoken');
 
-const {USER_SELECT} = require('../data/actions');
+const actions = require('../data/actions');
 const {dataApi} = require('../data');
 const {getIP, config: {auth: {jwtKey}}} = require('../utils');
 const {getDecodedJwt, validatePassword} = require('./common');
@@ -25,7 +25,7 @@ function authorizeHeader (request, response) {
   const {authorization} = request.headers;
   if (!authorization) {
     response.status(401);
-    response.json({error: 'No authorization token.'});
+    response.json({success: false, error: 'No authorization token.'});
     return false;
   }
   try {
@@ -34,7 +34,7 @@ function authorizeHeader (request, response) {
     const adminRoute = adminRoutes.find(path => request.originalUrl === path);
     if (adminRoute && !isAdmin) {
       response.status(401);
-      response.json({error: 'Unauthorized.'});
+      response.json({success: false, error: 'Unauthorized.'});
       return false;
     } else {
       const ua = request.headers['user-agent'];
@@ -43,14 +43,14 @@ function authorizeHeader (request, response) {
         return {success: true, isAdmin, firstname, lastname};
       } else {
         response.status(401);
-        response.json({error: 'Config does not match.'});
+        response.json({success: false, error: 'Config does not match.'});
         return false;
       }
     }
   } catch (e) {
     // console.log(e);
     response.status(401);
-    response.json({error: 'Invalid token.'});
+    response.json({success: false, error: 'Invalid token.'});
     return false;
   }
 }
@@ -58,10 +58,10 @@ function authorizeHeader (request, response) {
 async function login (request, response) {
   try {
     const {email, password} = request.body;
-    const result = await dataApi(USER_SELECT, [email], request);
+    const result = await dataApi(actions.USER_SELECT, [email], request);
     if (!result.length) {
       response.status(401);
-      response.json({sucess: false, error: 'Invalid user.'});
+      response.json({success: false, error: 'Invalid user.'});
       return;
     }
     const {password: verifyPassword, admin, firstname, lastname, id} = result[0];

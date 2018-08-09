@@ -53,6 +53,11 @@ describe ('auth module tests', () => {
 
       expect(response.status).to.have.been.calledWith(401);
       expect(response.json).to.have.been.calledOnce();
+
+      const args = response.json.getCall(0).args[0];
+
+      expect(args.success).to.be.false();
+      expect(args.error).to.equal('Invalid user.');
     });
 
     it ('should fail login user with invalid password', async () => {
@@ -103,7 +108,7 @@ describe ('auth module tests', () => {
       api.authorizeHeader(request, response);
 
       expect(response.status).to.be.calledWith(401);
-      expect(response.json).to.be.calledWith({error: 'Invalid token.'});
+      expect(response.json).to.be.calledWith({success: false, error: 'Invalid token.'});
     });
 
     it ('should fail when no header.', () => {
@@ -112,7 +117,7 @@ describe ('auth module tests', () => {
       api.authorizeHeader(request, response);
 
       expect(response.status).to.be.calledWith(401);
-      expect(response.json).to.be.calledWith({error: 'No authorization token.'});
+      expect(response.json).to.be.calledWith({success: false, error: 'No authorization token.'});
     });
 
     it ('should fail when headers dont match.', () => {
@@ -122,7 +127,7 @@ describe ('auth module tests', () => {
       api.authorizeHeader(request, response);
 
       expect(response.status).to.be.calledWith(401);
-      expect(response.json).to.be.calledWith({error: 'Config does not match.'});
+      expect(response.json).to.be.calledWith({success: false, error: 'Config does not match.'});
     });
 
     it ('should pass through when whitelisted route.', () => {
@@ -140,7 +145,7 @@ describe ('auth module tests', () => {
       api.authorizeHeader(request, response);
 
       expect(response.status).to.be.calledWith(401);
-      expect(response.json).to.be.calledWith({error: 'Unauthorized.'});
+      expect(response.json).to.be.calledWith({success: false, error: 'Unauthorized.'});
     });
 
     it ('should authorise.', () => {

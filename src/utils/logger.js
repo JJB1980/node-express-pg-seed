@@ -5,8 +5,17 @@ const path = require('path');
 let logStream = null;
 
 function initLogger () {
-  const file = '/var/log/example-app.log';
-  logStream = fs.createWriteStream(file, {'flags': 'a'});
+  try {
+    const file = '/var/log/example-app.log';
+    logStream = fs.createWriteStream(file, {'flags': 'a'});
+    logStream.on('error', function(err) {
+      console.log('Unable to initalise logger.')
+      logStream.end();
+      logStream = null;
+    });
+  } catch (e) {
+    console.log(e);
+  }
 }
 
 function log (action, args, source, user) {
